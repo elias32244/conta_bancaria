@@ -1,8 +1,30 @@
 import * as readlineSync from "readline-sync";
 import Colors from "./util/Colors";
+import { Conta } from "./model/Conta";
 
 export default class Menu {
   start() {
+
+
+const conta1 = new Conta(1, 123, 1, "Adriana", 1000);
+    const conta2 = new Conta(2, 456, 2, "Marcos", 500);
+
+    console.log("\n==== Teste Conta 1 ====");
+    conta1.visualizar();
+    conta1.sacar(200);
+    conta1.visualizar();
+    conta1.depositar(500);
+    conta1.visualizar();
+
+    console.log("\n==== Teste Conta 2 ====");
+    conta2.visualizar();
+    conta2.sacar(800); // saque maior que o saldo -> erro
+    conta2.depositar(1200);
+    conta2.visualizar();
+
+    readlineSync.question("\nPressione ENTER para ver o Menu...");
+
+
     let running = true;
 
     while (running) {
