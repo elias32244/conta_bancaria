@@ -1,37 +1,17 @@
-import { Conta } from "./Conta";
+import { Conta } from './Conta';
 
 export class ContaCorrente extends Conta {
+  constructor(id: number, titular: string, saldo: number, private limite: number = 0) {
+    super(id, titular, saldo);
+  }
 
-    private _limite: number;
+  sacar(valor: number): void {
+    if (valor <= 0) throw new Error('Valor inválido');
+    if (valor > this.saldo + this.limite) throw new Error('Saldo + limite insuficiente');
+    (this as any)._saldo -= valor;
+  }
 
-    constructor(numero: number, agencia: number, tipo: number, titular: string, 
-        saldo: number, limite: number) {
-        super(numero, agencia, tipo, titular, saldo);
-        this._limite = limite;
-    }
-    
-    public get limite() {
-        return this._limite;
-    }
-
-    public set limite(limite: number) {
-        this._limite = limite;
-    }
-
-    public sacar(valor: number): boolean {
-
-        if ((this.saldo + this._limite) < valor) {
-            console.log("\n Saldo Insuficiente!");
-            return false;
-        }
-
-        this.saldo = this.saldo - valor;
-        return true;
-    }
-
-    public visualizar(): void {
-        super.visualizar();
-        console.log("Limite: " + this._limite.toFixed(2));
-    }
-
+  tipo(): string {
+    return "Corrente";
+  }
 }

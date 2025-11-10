@@ -1,25 +1,62 @@
-import { Conta } from "../src/model/Conta";
-import { ContaCorrente } from "../src/model/ContaCorrente";
-import { ContaPoupanca } from "../src/model/ContaPoupanca";
+import readlineSync from 'readline-sync';
+import { ContaCorrente } from './model/ContaCorrente';
+import { ContaPoupanca } from './model/ContaPoupanca';
+import { Conta } from './model/Conta';
+import { ContaRepository } from './model/ContaRepository';
 
-// Teste rápido
-const conta = new Conta(1, 123, 1, "Adriana", 10000);
-conta.visualizar();
-conta.sacar(10500);
-conta.visualizar();
-conta.depositar(5000);
-conta.visualizar();
+class ContaArrayRepository implements ContaRepository {
+  private contas: Conta[] = [];
 
-const contacorrente = new ContaCorrente(2, 123, 1, "Mariana", 15000, 1000);
-contacorrente.visualizar();
-contacorrente.sacar(2000);
-contacorrente.visualizar();
-contacorrente.depositar(1000);
-contacorrente.visualizar();
+  salvar(conta: Conta): void { this.contas.push(conta); }
+  atualizar(conta: Conta): void { const i = this.contas.findIndex(c=>c.id===conta.id); if(i!==-1) this.contas[i]=conta; }
+  remover(id: number): void { this.contas = this.contas.filter(c=>c.id!==id); }
+  buscarPorId(id: number): Conta | undefined { return this.contas.find(c=>c.id===id); }
+  listar(): Conta[] { return this.contas; }
+}
 
-const contapoupanca = new ContaPoupanca(3, 123, 2, "Victor", 1000, 10);
-contapoupanca.visualizar();
-contapoupanca.sacar(200);
-contapoupanca.visualizar();
-contapoupanca.depositar(1000);
-contapoupanca.visualizar();
+export default class Menu {
+  private repo = new ContaArrayRepository();
+
+  start(): void {
+    while (true) {
+      console.log("\n=== MENU CONTA BANCÁRIA ===");
+      console.log("1 - Criar Conta Corrente");
+      console.log("2 - Criar Conta Poupança");
+      console.log("3 - Listar Contas");
+      console.log("4 - Sair");
+      const opc = readlineSync.questionInt("Escolha: ");
+      switch (opc) {
+        case 1: this.criarCC(); break;
+        case 2: this.criarCP(); break;
+        case 3: this.listar(); break;
+        case 4: return;
+        default: console.log("Opção inválida");
+      }
+    }
+  }
+
+  private gerarId(): number { return this.repo.listar().length + 1; }
+
+  private criarCC(): void {
+    const titular = readlineSync.question("Titular: ");
+    const saldo = readlineSync.questionFloat("Saldo inicial: ");
+    const limite = readlineSync.questionFloat("Limite: ");
+    const conta = new ContaCorrente(this.gerarId(), titular, saldo, limite);
+    this.repo.salvar(conta);
+    console.log("Conta Corrente criada!");
+  }
+
+  private criarCP(): void {
+    const titular = readlineSync.question("Titular: ");
+    const saldo = readlineSync.questionFloat("Saldo inicial: ");
+    const conta = new ContaPoupanca(this.gerarId(), titular, saldo);
+    this.repo.salvar(conta);
+    console.log("Conta Poupança criada!");
+  }
+
+  private listar(): void {
+    console.log(this.repo.listar());
+  }
+}
+
+new Menu().start();
