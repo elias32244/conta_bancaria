@@ -1,24 +1,43 @@
 export abstract class Conta {
-  constructor(
-    public readonly id: number,
-    public titular: string,
-    protected _saldo: number
-  ) {}
+    constructor(
+        private _numero: number,
+        private _agencia: number,
+        private _tipo: number,
+        private _titular: string,
+        protected _saldo: number
+    ) {}
 
-  get saldo(): number {
-    return this._saldo;
-  }
+    public get numero(): number { return this._numero; }
+    public get agencia(): number { return this._agencia; }
+    public get tipo(): number { return this._tipo; }
+    public get titular(): string { return this._titular; }
+    public get saldo(): number { return this._saldo; }
 
-  depositar(valor: number): void {
-    if (valor <= 0) throw new Error('Valor inválido');
-    this._saldo += valor;
-  }
+    public set numero(numero: number) { this._numero = numero; }
+    public set agencia(agencia: number) { this._agencia = agencia; }
+    public set tipo(tipo: number) { this._tipo = tipo; }
+    public set titular(titular: string) { this._titular = titular; }
+    public set saldo(saldo: number) { this._saldo = saldo; }
 
-  sacar(valor: number): void {
-    if (valor <= 0) throw new Error('Valor inválido');
-    if (valor > this._saldo) throw new Error('Saldo insuficiente');
-    this._saldo -= valor;
-  }
+    public sacar(valor: number): boolean {
+        if(this._saldo >= valor){
+            this._saldo -= valor;
+            return true;
+        }
+        return false;
+    }
 
-  abstract tipo(): string;
+    public depositar(valor: number): void {
+        this._saldo += valor;
+    }
+
+    public visualizar(): void {
+        console.log("*****************************************************");
+        console.log("Dados da Conta:");
+        console.log("*****************************************************");
+        console.log(`Número da Conta: ${this._numero}`);
+        console.log(`Agência: ${this._agencia}`);
+        console.log(`Titular: ${this._titular}`);
+        console.log(`Saldo: ${this._saldo.toFixed(2)}`);
+    }
 }
