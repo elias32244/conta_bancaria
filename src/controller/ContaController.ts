@@ -1,5 +1,6 @@
 import { Conta } from "../model/Conta";
 import { IContaRepository } from "../repository/IContaRepository";
+import { colors } from "../util/Colors";
 
 export class ContaController implements IContaRepository {
 
@@ -14,7 +15,7 @@ export class ContaController implements IContaRepository {
 
     public cadastrar(conta: Conta): void {
         this.listaContas.push(conta);
-        console.log(`\nA Conta número: ${conta.numero} foi criada com sucesso!`);
+        console.log(colors.fg.green, "\nA Conta número: " + conta.numero + " foi criada com sucesso!", colors.reset);
     }
 
     public procurarPorNumero(numero: number): void {
@@ -23,7 +24,7 @@ export class ContaController implements IContaRepository {
         if (conta != null)
             conta.visualizar();
         else
-            console.log(`\nA Conta número: ${numero} não foi encontrada!`);
+            console.log(colors.fg.red, "\nA Conta número: " + numero + " não foi encontrada!", colors.reset);
     }
 
     public atualizar(conta: Conta): void {
@@ -31,9 +32,9 @@ export class ContaController implements IContaRepository {
 
         if (buscaConta != null) {
             this.listaContas[this.listaContas.indexOf(buscaConta)] = conta;
-            console.log(`\nA Conta número: ${conta.numero} foi atualizada com sucesso!`);
+            console.log(colors.fg.green, "\nA Conta número: " + conta.numero + " foi atualizada com sucesso!", colors.reset);
         } else {
-            console.log(`\nA Conta número: ${conta.numero} não foi encontrada!`);
+            console.log(colors.fg.red, "\nA Conta número: " + conta.numero + " não foi encontrada!", colors.reset);
         }
     }
 
@@ -42,23 +43,25 @@ export class ContaController implements IContaRepository {
 
         if (conta != null) {
             this.listaContas.splice(this.listaContas.indexOf(conta), 1);
-            console.log(`\nA Conta número: ${numero} foi deletada com sucesso!`);
+            console.log(colors.fg.green, "\nA Conta número: " + numero + " foi deletada com sucesso!", colors.reset);
         } else {
-            console.log(`\nA Conta número: ${numero} não foi encontrada!`);
+            console.log(colors.fg.red, "\nA Conta número: " + numero + " não foi encontrada!", colors.reset);
         }
     }
+
 
     public sacar(numero: number, valor: number): void {
         let conta = this.buscarNaCollection(numero);
 
         if (conta != null) {
-            if (conta.sacar(valor))
-                console.log(`\nO saque foi realizado com sucesso!`);
-            else
-                console.log(`\nSaldo insuficiente!`);
-        } else {
-            console.log(`\nA Conta número: ${numero} não foi encontrada!`);
-        }
+
+            if (conta.sacar(valor) == true)
+                console.log(colors.fg.green, "\nO Saque na Conta número: " + numero +
+                    " foi efetuado com sucesso!", colors.reset);
+
+        } else
+            console.log(colors.fg.red, "\nA Conta número: " + numero +
+                " não foi encontrada!", colors.reset);
     }
 
     public depositar(numero: number, valor: number): void {
@@ -66,9 +69,9 @@ export class ContaController implements IContaRepository {
 
         if (conta != null) {
             conta.depositar(valor);
-            console.log(`\nO Depósito foi realizado com sucesso!`);
+            console.log(colors.fg.green, "\nO Depósito foi realizado com sucesso!", colors.reset);
         } else {
-            console.log(`\nA Conta número: ${numero} não foi encontrada!`);
+            console.log(colors.fg.red, "\nA Conta número: " + numero + " não foi encontrada!", colors.reset);
         }
     }
 
@@ -79,11 +82,11 @@ export class ContaController implements IContaRepository {
         if (origem != null && destino != null) {
             if (origem.sacar(valor)) {
                 destino.depositar(valor);
-                console.log(`\nA transferência foi realizada com sucesso!`);
+                console.log(colors.fg.green, "\nA transferência foi realizada com sucesso!", colors.reset);
             } else
-                console.log(`\nSaldo insuficiente!`);
+                console.log(colors.fg.red, "\nSaldo insuficiente!", colors.reset);
         } else {
-            console.log(`\nConta de Origem e/ou Destino não encontradas!`);
+            console.log(colors.fg.red, "\nConta de Origem e/ou Destino não encontradas!", colors.reset);
         }
     }
 
